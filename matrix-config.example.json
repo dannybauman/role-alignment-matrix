@@ -1,0 +1,24 @@
+{
+  "title": "Open Source Library Evaluation",
+  "eyebrow": "Engineering Working Doc · Example",
+  "metaItems": [
+    "Q3 stack review",
+    "Prepared 2025-09-12",
+    "6 candidates · 5 criteria"
+  ],
+  "counterLabel": "Candidates · Criteria",
+
+  "roles": [
+    { "id": "perf",      "name": "Performance",         "status": "active",      "shortStatus": "Hot-path latency",     "description": "Throughput, memory profile, and latency at production scale." },
+    { "id": "docs",      "name": "Documentation",        "status": "active",      "shortStatus": "Onboarding curve",     "description": "Reference docs, tutorials, getting-started flow, examples." },
+    { "id": "community", "name": "Community / OSS",      "status": "active",      "shortStatus": "Maintainer health",    "description": "Active maintainers, PR cadence, issue response time, governance." },
+    { "id": "stability", "name": "API Stability",        "status": "active",      "shortStatus": "Breakage history",     "description": "How often breaking changes ship. Migration story for major versions." },
+    { "id": "license",   "name": "License",              "status": "prospective", "shortStatus": "Compatibility",        "description": "License compatibility with our stack and downstream redistribution." }
+  ],
+
+  "sections": [
+    { "id": "shortlist",  "name": "Shortlist" },
+    { "id": "watching",   "name": "Watching" },
+    { "id": "deprecated", "name": "Deprecated / passed over" }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "candidates": [
+    {
+      "name": "GeoFox",
+      "section": "shortlist",
+      "fits": {
+        "perf":      { "tier": 1, "primary": true, "note": "Fastest in benchmarks across our shapes" },
+        "docs":      { "tier": 2, "note": "Reference is solid, tutorials thin" },
+        "community": { "tier": 1 },
+        "stability": { "tier": 2, "note": "Two breaking changes in 18 months" },
+        "license":   { "tier": 1 }
+      }
+    },
+    {
+      "name": "RasterForge",
+      "section": "shortlist",
+      "fits": {
+        "perf":      { "tier": 2 },
+        "docs":      { "tier": 1, "primary": true, "note": "Best documentation in the pool" },
+        "community": { "tier": 2 },
+        "stability": { "tier": 1 },
+        "license":   { "tier": 1 }
+      }
+    },
+    {
+      "name": "TileSmith",
+      "section": "shortlist",
+      "fits": {
+        "perf":      { "tier": 1 },
+        "docs":      { "tier": 3 },
+        "community": { "tier": 2, "note": "Single primary maintainer" },
+        "stability": { "tier": 2 },
+        "license":   { "tier": 2, "note": "Dual license — verify commercial use" }
+      }
+    },
+    {
+      "name": "SpatialKit",
+      "section": "watching",
+      "fits": {
+        "perf":      { "tier": 2, "range": "2-3", "note": "Mixed signal at our data sizes" },
+        "docs":      { "tier": 2 },
+        "community": { "tier": 1, "primary": true, "note": "Most engaged maintainers" },
+        "stability": { "tier": 3, "note": "Pre-1.0, breaking changes expected" },
+        "license":   { "tier": 1 }
+      }
+    },
+    {
+      "name": "PolyMesh",
+      "section": "watching",
+      "fits": {
+        "perf":      { "tier": 3, "note": "Slower than alternatives at scale" },
+        "docs":      { "tier": 2 },
+        "community": { "tier": 2 },
+        "stability": { "tier": 1 },
+        "license":   { "tier": 3, "note": "GPL — incompatible with our distribution model" }
+      }
+    },
+    {
+      "name": "OldVector",
+      "section": "deprecated",
+      "fits": {
+        "perf":      { "closed": true, "note": "Project archived 2023" },
+        "docs":      { "closed": true },
+        "community": { "closed": true },
+        "stability": { "closed": true },
+        "license":   { "closed": true }
+      }
+    }
+  ],
+
+  "links": {
+    "GeoFox":      { "site": "https://example.com/geofox",     "github": "https://github.com/example/geofox" },
+    "RasterForge": { "site": "https://example.com/rasterforge","github": "https://github.com/example/rasterforge" },
+    "TileSmith":   { "site": "https://example.com/tilesmith",  "github": "https://github.com/example/tilesmith" },
+    "SpatialKit":  { "site": "https://example.com/spatialkit", "github": "https://github.com/example/spatialkit" },
+    "PolyMesh":    { "github": "https://github.com/example/polymesh" },
+    "OldVector":   { "github": "https://github.com/example/oldvector" }
+  },
+
+  "roleRollups": {
+    "perf": {
+      "tier1": ["GeoFox (fastest in benchmarks)", "TileSmith"],
+      "tier2": ["RasterForge", "SpatialKit (mixed at scale)"],
+      "tier3": ["PolyMesh (slow at scale)"],
+      "note": "Performance leaders are GeoFox and TileSmith. SpatialKit is promising but mixed signal at our data sizes — re-evaluate after their 1.0 release."
+    },
+    "docs": {
+      "tier1": ["RasterForge"],
+      "tier2": ["GeoFox", "SpatialKit", "PolyMesh"],
+      "tier3": ["TileSmith (sparse tutorials)"],
+      "note": "RasterForge documentation is the gold standard. TileSmith's reference is fine but the onboarding story is rough — would slow new contributors."
+    },
+    "community": {
+      "tier1": ["GeoFox", "SpatialKit (most engaged maintainers)"],
+      "tier2": ["RasterForge", "TileSmith (single primary)", "PolyMesh"],
+      "tier3": [],
+      "note": "Bus factor concern on TileSmith with a single primary maintainer. Worth probing whether they accept outside contributions."
+    },
+    "stability": {
+      "tier1": ["RasterForge", "PolyMesh"],
+      "tier2": ["GeoFox (two breaks in 18mo)", "TileSmith"],
+      "tier3": ["SpatialKit (pre-1.0)"],
+      "note": "SpatialKit's stability is the watch item. Pre-1.0 breakage is expected but a problem if we ship to long-lived deployments."
+    },
+    "license": {
+      "tier1": ["GeoFox", "RasterForge", "SpatialKit"],
+      "tier2": ["TileSmith (dual license)"],
+      "tier3": ["PolyMesh (GPL incompatible)"],
+      "note": "PolyMesh's GPL is the load-bearing reason to deprioritize, regardless of other strengths. TileSmith's dual license is a yes-with-paperwork."
+    }
+  },
+
+  "outreach": {
+    "motion": [
+      { "name": "GeoFox",      "tag": "Pilot",  "rationale": "Pilot project running on a small dataset slice." },
+      { "name": "RasterForge", "tag": "Eval",   "rationale": "Documentation deep-dive in progress this sprint." }
+    ],
+    "week": [
+      { "priority": 1, "name": "GeoFox",      "tag": "Benchmark",   "rationale": "Run the production-scale benchmark against our top three shapes." },
+      { "priority": 1, "name": "RasterForge", "tag": "Onboarding",  "rationale": "Walk a new engineer through the getting-started flow, time to first useful output." },
+      { "priority": 2, "name": "TileSmith",   "tag": "Maintainer",  "rationale": "Reach out to primary maintainer about contribution acceptance." },
+      { "priority": 3, "name": "SpatialKit",  "tag": "Roadmap",     "rationale": "Read 1.0 roadmap, decide if the timeline is workable." }
+    ],
+    "hold": [
+      { "name": "PolyMesh",  "tag": "License",  "rationale": "GPL is a hard miss for our distribution model. Hold unless dual-license becomes an option." },
+      { "name": "OldVector", "tag": "Archived", "rationale": "Project archived. Closed for evaluation, no path forward." }
+    ]
+  },
+
+  "observations": [
+    {
+      "title": "GeoFox is the front-runner on hot-path performance.",
+      "body": "Production-scale benchmarks consistently land it ahead. The two breaking changes in 18 months are a real signal but our migration cost has been low historically."
+    },
+    {
+      "title": "Documentation gap on TileSmith is the largest near-term risk.",
+      "body": "If we ship with TileSmith we'd carry the cost of writing onboarding material ourselves. Worth weighing against its performance lead."
+    },
+    {
+      "title": "License blockers are easier to disqualify than to design around.",
+      "body": "PolyMesh's GPL means we can't use it regardless of other strengths. Cleaner to mark closed early than to keep evaluating against criteria that won't change the outcome."
+    }
+  ]
+}

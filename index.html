@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Role Alignment Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,800;9..144,900&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:        #f4efe3;
+  --paper-soft:   #ede6d3;
+  --paper-warm:   #f8e6a4;
+  --paper-line:   #d6cdb8;
+  --paper-line-2: #b8ad94;
+  --ink:          #1c1814;
+  --ink-soft:     #4a4238;
+  --ink-faint:    #877d6b;
+  --ink-ghost:    #b3a994;
+  --mars:         #c8482b;
+  --mars-deep:    #9b3318;
+  --mars-soft:    #f3d4c6;
+  --teal:         #225a6c;
+  --teal-soft:    #c8dde3;
+  --ochre:        #a8865a;
+  --ochre-soft:   #e6d6b8;
+  --closed:       #b3a994;
+  --highlight:    #fff1b8;
+  --shadow:       rgba(28,24,20,0.12);
+  --shadow-deep:  rgba(28,24,20,0.28);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(168, 134, 90, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(34, 90, 108, 0.03) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.108 0 0 0 0 0.094 0 0 0 0 0.078 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+main, header, nav, aside {
+  position: relative;
+  z-index: 2;
+}
+
+/* MASTHEAD =============================== */
+
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding: 32px 48px 20px;
+  position: relative;
+}
+
+.masthead::after {
+  content: '';
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: -6px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.masthead-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: end;
+}
+
+.masthead-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.masthead-eyebrow::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: var(--mars);
+  display: inline-block;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.masthead-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 600;
+  font-size: 64px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.masthead-title em {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  color: var(--mars);
+  font-weight: 500;
+}
+
+.masthead-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.masthead-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.masthead-meta .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+}
+
+.masthead-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.counter-block {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 14px 22px 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.counter-block::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid rgba(244, 239, 227, 0.18);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.counter-num {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.counter-num.is-current {
+  color: var(--mars-soft);
+}
+
+.counter-divider {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 22px;
+  color: rgba(244, 239, 227, 0.5);
+}
+
+.counter-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.next-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.next-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.next-btn .arrow {
+  transition: transform 0.15s ease;
+}
+
+.next-btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* TABS ================================== */
+
+.tabs {
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  border-bottom: 1px solid var(--paper-line);
+  gap: 0;
+  background: var(--paper);
+}
+
+.tab {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  color: var(--ink-soft);
+  padding: 16px 28px 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab.is-active {
+  color: var(--mars);
+  border-bottom-color: var(--mars);
+  font-weight: 600;
+  padding-left: 32px;
+}
+
+.tab.is-active::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 14px;
+  width: 5px;
+  height: 5px;
+  background: var(--mars);
+  border-radius: 50%;
+}
+
+/* CONTROL BAR =========================== */
+
+.controlbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 48px;
+  border-bottom: 1px solid var(--paper-line);
+  background: var(--paper);
+  flex-wrap: wrap;
+}
+
+.controlbar-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-right: -12px;
+}
+
+.chips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--paper-line);
+  color: var(--ink-soft);
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.chip.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.chip-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+  align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.legend-swatch.t1 { background: var(--mars); }
+.legend-swatch.t2 { background: var(--teal); }
+.legend-swatch.t3 { background: var(--ochre); }
+.legend-swatch.primary {
+  background: transparent;
+  border: 1px solid var(--ink);
+  position: relative;
+}
+.legend-swatch.primary::after {
+  content: '★';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  font-size: 10px;
+  color: var(--mars);
+}
+
+/* MATRIX ================================ */
+
+.matrix-wrap {
+  padding: 24px 48px 48px;
+  overflow-x: auto;
+}
+
+.section-band {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  margin-top: 36px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--paper-line-2);
+}
+
+.section-band:first-child { margin-top: 16px; }
+
+.section-band-title {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 24;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.section-band-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.matrix {
+  display: grid;
+  grid-template-columns: 220px repeat(13, 1fr);
+  gap: 0;
+  background: var(--paper);
+  font-feature-settings: "tnum";
+  min-width: 1100px;
+}
+
+.col-head {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 12px 4px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--ink);
+  cursor: pointer;
+  background: var(--paper);
+  transition: background 0.12s ease;
+  white-space: nowrap;
+}
+
+.col-head:hover {
+  background: var(--paper-warm);
+  color: var(--ink);
+}
+
+.col-head.col-head-name {
+  text-align: left;
+  padding-left: 4px;
+  cursor: default;
+  background: var(--paper);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 12;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.col-head.col-head-name:hover { background: var(--paper); }
+
+.col-head.is-highlighted {
+  background: var(--paper-warm);
+  color: var(--ink);
+}
+
+.cell-name {
+  padding: 10px 8px 10px 4px;
+  font-size: 13px;
+  border-bottom: 1px dotted var(--paper-line);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.12s ease;
+  background: var(--paper);
+}
+
+.cell-name:hover,
+.cell-name.is-highlighted {
+  background: var(--paper-warm);
+}
+
+.cell-name .name {
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  flex: 1;
+}
+
+.cell-name.is-discussed .name {
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-faint);
+  text-decoration-thickness: 1.5px;
+  color: var(--ink-faint);
+}
+
+.cell-name .check {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--paper-line-2);
+  border-radius: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+  background: var(--paper);
+}
+
+.cell-name .check:hover {
+  border-color: var(--ink);
+}
+
+.cell-name.is-discussed .check {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.cell-name.is-discussed .check::after {
+  content: '✓';
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cell {
+  padding: 0;
+  border-bottom: 1px dotted var(--paper-line);
+  border-left: 1px dotted var(--paper-line);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell:hover {
+  background: var(--paper-warm);
+}
+
+.cell.is-row-highlighted {
+  background: var(--paper-warm);
+}
+
+.tier-mark {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+
+.tier-mark.t1 {
+  background: var(--mars);
+  color: var(--paper);
+}
+
+.tier-mark.t2 {
+  background: transparent;
+  border: 1.5px solid var(--teal);
+  color: var(--teal);
+}
+
+.tier-mark.t3 {
+  background: transparent;
+  color: var(--ochre);
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border: 1px dashed var(--ochre);
+}
+
+.tier-mark.range {
+  font-size: 10px;
+  letter-spacing: -0.05em;
+}
+
+.tier-mark .primary-mark {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  color: var(--mars-deep);
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 2px var(--paper);
+}
+
+.tier-mark.t1 .primary-mark {
+  color: var(--paper-warm);
+  text-shadow: 0 0 1px var(--mars-deep);
+}
+
+.cell-empty {
+  color: var(--ink-ghost);
+  font-size: 11px;
+}
+
+.cell.is-closed::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 3px,
+    rgba(179, 169, 148, 0.2) 3px,
+    rgba(179, 169, 148, 0.2) 5px
+  );
+  pointer-events: none;
+}
+
+.cell.is-declined::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(200, 72, 43, 0.15) 3px,
+    rgba(200, 72, 43, 0.15) 5px
+  );
+  pointer-events: none;
+}
+
+/* DRAWER ================================ */
+
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 24, 20, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-scrim.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 540px;
+  max-width: 90vw;
+  background: var(--paper);
+  border-left: 1px solid var(--ink);
+  box-shadow: -20px 0 60px var(--shadow-deep);
+  z-index: 51;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--paper-line-2);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-family: 'IBM Plex Mono', monospace;
+  z-index: 2;
+}
+
+.drawer-close:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: rotate(90deg);
+}
+
+.drawer-body {
+  padding: 36px 40px 60px;
+}
+
+.drawer-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-eyebrow .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--mars);
+  border-radius: 50%;
+}
+
+.drawer-title {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 72;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.drawer-subtitle {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-variation-settings: "opsz" 14;
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+
+.drawer-section {
+  margin-top: 28px;
+}
+
+.drawer-section-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--paper-line-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.drawer-section-title .meta {
+  font-size: 9px;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+}
+
+.fit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fit-item {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.fit-item:hover {
+  background: var(--paper-soft);
+}
+
+.fit-item .tier-mark {
+  margin-top: 2px;
+}
+
+.fit-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fit-item-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.fit-item-shape {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.fit-item-note {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 14;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.fit-item.primary-lane {
+  background: linear-gradient(90deg, var(--paper-warm) 0%, transparent 70%);
+  border-left: 2px solid var(--mars);
+  padding-left: 12px;
+  margin-left: -14px;
+}
+
+.primary-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--mars);
+  color: var(--paper);
+  padding: 3px 6px;
+  border-radius: 2px;
+  align-self: flex-start;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border: 1px solid var(--paper-line-2);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.link-pill:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.link-pill.greenhouse {
+  background: var(--mars);
+  border-color: var(--mars);
+  color: var(--paper);
+}
+
+.link-pill.greenhouse:hover {
+  background: var(--mars-deep);
+  border-color: var(--mars-deep);
+}
+
+.link-pill .icon {
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link-pill svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.link-empty {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.exclusion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.exclusion-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  background: var(--paper-soft);
+  color: var(--ink-faint);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px dashed var(--paper-line-2);
+}
+
+.exclusion-pill .label {
+  color: var(--mars-deep);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.notes-area {
+  width: 100%;
+  min-height: 90px;
+  padding: 14px 16px;
+  border: 1px solid var(--paper-line-2);
+  background: var(--paper-soft);
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 14;
+  font-size: 14px;
+  color: var(--ink);
+  resize: vertical;
+  border-radius: 2px;
+  line-height: 1.5;
+}
+
+.notes-area:focus {
+  outline: 2px solid var(--mars);
+  outline-offset: -1px;
+  background: var(--paper);
+}
+
+.notes-area::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.discuss-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 16px 0;
+  border-top: 2px solid var(--ink);
+}
+
+.discuss-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink);
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.discuss-toggle .check {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  transition: all 0.15s ease;
+}
+
+.discuss-toggle.is-on .check {
+  background: var(--mars);
+  border-color: var(--mars);
+}
+
+.discuss-toggle.is-on .check::after {
+  content: '✓';
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.discuss-toggle .timestamp {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-faint);
+}
+
+/* ROLE DRAWER ============================ */
+
+.role-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.role-stat {
+  background: var(--paper-soft);
+  padding: 12px 14px;
+  border-left: 3px solid;
+  border-radius: 2px;
+}
+
+.role-stat.t1 { border-left-color: var(--mars); }
+.role-stat.t2 { border-left-color: var(--teal); }
+.role-stat.t3 { border-left-color: var(--ochre); }
+
+.role-stat-num {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 36;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.role-stat.t1 .role-stat-num { color: var(--mars); }
+.role-stat.t2 .role-stat-num { color: var(--teal); }
+.role-stat.t3 .role-stat-num { color: var(--ochre); }
+
+.role-stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.role-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.role-status-pill.active {
+  background: var(--mars);
+  color: var(--paper);
+}
+
+.role-status-pill.prospective {
+  background: transparent;
+  color: var(--teal);
+  border: 1px solid var(--teal);
+}
+
+.role-status-pill .blink {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.role-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.role-list li {
+  padding: 6px 10px;
+  background: var(--paper-soft);
+  border-left: 2px solid var(--paper-line-2);
+  font-size: 13px;
+  border-radius: 2px;
+  transition: all 0.12s ease;
+}
+
+.role-list li.is-clickable {
+  cursor: pointer;
+}
+
+.role-list li.is-clickable:hover {
+  background: var(--paper-warm);
+  border-left-color: var(--mars);
+}
+
+.pool-reading {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-variation-settings: "opsz" 14;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  background: var(--paper-soft);
+  padding: 14px 16px;
+  border-left: 2px solid var(--mars);
+  border-radius: 2px;
+}
+
+/* OUTREACH VIEW ========================== */
+
+.outreach-wrap {
+  padding: 32px 48px 60px;
+  max-width: 1200px;
+}
+
+.outreach-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "motion hold"
+    "week week";
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.area-motion { grid-area: motion; }
+.area-hold   { grid-area: hold; }
+.area-week   { grid-area: week; }
+
+.priority-divider {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 14px 8px 4px;
+  border-top: 1px dashed var(--paper-line-2);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priority-divider:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 4px;
+}
+
+.priority-divider .priority-num {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--mars);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.outreach-num.is-grouped {
+  visibility: hidden;
+}
+
+.outreach-block {
+  background: var(--paper);
+  border: 1px solid var(--paper-line-2);
+  padding: 28px 28px 24px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.outreach-block::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 32px;
+  height: 32px;
+  border-top: 3px solid var(--mars);
+  border-left: 3px solid var(--mars);
+}
+
+.outreach-block.priority-2::before { border-color: var(--teal); }
+.outreach-block.holding::before { border-color: var(--ochre); }
+
+.outreach-block-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+
+.outreach-block-title {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 36;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.outreach-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.outreach-item {
+  padding: 12px 8px;
+  border-bottom: 1px dotted var(--paper-line);
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  margin: 0 -8px;
+}
+
+.outreach-item:hover {
+  background: var(--paper-warm);
+}
+
+.outreach-item:last-child { border-bottom: none; }
+
+.outreach-num {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 24;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--mars);
+  line-height: 1.2;
+}
+
+.outreach-name {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.outreach-rationale {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-variation-settings: "opsz" 14;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.outreach-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  background: var(--paper-soft);
+  color: var(--ink-soft);
+  padding: 3px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  align-self: start;
+}
+
+/* BRIEFING VIEW ========================= */
+
+.briefing-wrap {
+  padding: 32px 48px 60px;
+  max-width: 980px;
+}
+
+.brief-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 14px;
+}
+
+.brief-title {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin-bottom: 16px;
+}
+
+.brief-title em {
+  font-style: italic;
+  color: var(--mars);
+}
+
+.brief-lede {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  max-width: 60ch;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.observations {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.observation {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  position: relative;
+  overflow: hidden;
+}
+
+.observation-num {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 60;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  line-height: 1;
+}
+
+.observation.is-mars .observation-num {
+  background: var(--mars);
+}
+
+.observation-body {
+  padding: 18px 22px;
+}
+
+.observation-headline {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 18;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.25;
+  margin-bottom: 6px;
+  letter-spacing: -0.005em;
+}
+
+.observation-body p {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+/* MISC =================================== */
+
+.view { display: none; }
+.view.is-active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.matrix .cell-name,
+.matrix .cell {
+  animation: fadeUp 0.4s ease backwards;
+}
+
+.cell, .cell-name {
+  user-select: none;
+}
+
+@media (max-width: 1100px) {
+  .masthead, .tabs, .controlbar, .matrix-wrap, .outreach-wrap, .briefing-wrap {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .masthead-title { font-size: 44px; }
+}
+
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-row">
+    <div class="masthead-left">
+      <div class="masthead-eyebrow"></div>
+      <h1 class="masthead-title">Role Alignment Matrix</h1>
+      <div class="masthead-meta"></div>
+    </div>
+    <div class="masthead-right">
+      <div class="counter-block">
+        <span class="counter-num">0</span>
+        <span class="counter-divider">·</span>
+        <span class="counter-num">0</span>
+      </div>
+      <div class="counter-label">Candidates · Roles</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab is-active" data-view="matrix" type="button">Matrix</button>
+  <button class="tab" data-view="outreach" type="button">Priorities</button>
+  <button class="tab" data-view="briefing" type="button">Briefing Notes</button>
+</nav>
+
+<div class="controlbar" id="controlbar">
+  <div class="controlbar-label">Sections</div>
+  <div class="chips" id="sectionChips"></div>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-swatch t1"></span>Tier 1 — Schedule</div>
+    <div class="legend-item"><span class="legend-swatch t2"></span>Tier 2 — Probe</div>
+    <div class="legend-item"><span class="legend-swatch t3"></span>Tier 3 — Hold</div>
+    <div class="legend-item"><span class="legend-swatch primary"></span>Primary lane</div>
+  </div>
+</div>
+
+<main id="main">
+  <section class="view is-active" data-view="matrix">
+    <div class="matrix-wrap" id="matrixWrap"></div>
+  </section>
+
+  <section class="view" data-view="outreach">
+    <div class="outreach-wrap">
+      <div class="brief-eyebrow">Section 4 · Operational</div>
+      <h2 class="brief-title">Outreach <em>priority</em></h2>
+      <p class="brief-lede">Who we move on this week, and in what order. Already-in-motion at the top, fresh adds next, hold-pending below.</p>
+
+      <div class="outreach-grid">
+        <div class="outreach-block area-motion">
+          <div class="outreach-block-eyebrow">In motion</div>
+          <h3 class="outreach-block-title">Already underway</h3>
+          <ul class="outreach-list" id="outreach-motion"></ul>
+        </div>
+
+        <div class="outreach-block holding area-hold">
+          <div class="outreach-block-eyebrow">Holding</div>
+          <h3 class="outreach-block-title">On hold</h3>
+          <ul class="outreach-list" id="outreach-hold"></ul>
+        </div>
+
+        <div class="outreach-block area-week">
+          <div class="outreach-block-eyebrow">This week · Priority order</div>
+          <h3 class="outreach-block-title">To add, in priority order</h3>
+          <ul class="outreach-list" id="outreach-week"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" data-view="briefing">
+    <div class="briefing-wrap">
+      <div class="brief-eyebrow">Section 5 · Synthesis</div>
+      <h2 class="brief-title">Briefing <em>notes</em></h2>
+      <p class="brief-lede">What the matrix reveals once you read across both axes. Eight observations that should shape how we run the conversation.</p>
+
+      <div class="observations" id="observations"></div>
+    </div>
+  </section>
+</main>
+
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="drawer-close" id="drawerClose" aria-label="Close" type="button">×</button>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+<div class="drawer-scrim" id="drawerScrim"></div>
+
+<script>
+'use strict';
+
+// ============================================================
+// DATA — loaded at runtime from matrix-config.json + matrix-data.json
+// ============================================================
+// These globals are populated by the fetch flow at the bottom of this script.
+// See README for the full schema; copy matrix-{config,data}.example.json to
+// matrix-{config,data}.json and edit them to render your own situation.
+
+let ROLES, SECTIONS, CANDIDATES, LINKS, ROLE_ROLLUPS, OUTREACH, OBSERVATIONS;
+
+// ============================================================
+// SAFE DOM HELPERS — build elements without innerHTML interpolation
+// ============================================================
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const k in attrs) {
+      const v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k === 'style' && typeof v === 'object') Object.assign(node.style, v);
+      else if (k.startsWith('data-')) node.setAttribute(k, v);
+      else if (k === 'text') node.textContent = v;
+      else if (k === 'html') node.innerHTML = v; // only for tightly controlled, hardcoded HTML — never user input
+      else if (k in node) node[k] = v;
+      else node.setAttribute(k, v);
+    }
+  }
+  if (children) {
+    const list = Array.isArray(children) ? children : [children];
+    for (const c of list) {
+      if (c == null || c === false) continue;
+      if (typeof c === 'string') node.appendChild(document.createTextNode(c));
+      else node.appendChild(c);
+    }
+  }
+  return node;
+}
+
+function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+// ============================================================
+// STATE
+// ============================================================
+// state is initialized post-fetch (after SECTIONS is populated).
+// See bootstrap at the bottom of this script.
+
+let state;
+
+// ============================================================
+// TIER MARK builder (DOM, no innerHTML for dynamic content)
+// ============================================================
+
+function buildTierMark(fit) {
+  if (!fit || (fit.tier == null && !fit.closed && !fit.declined)) {
+    return el('span', { class: 'cell-empty', text: '—' });
+  }
+  if (fit.closed || fit.declined || fit.tier == null) return null;
+
+  const cls = `tier-mark t${fit.tier}` + (fit.range ? ' range' : '');
+  const text = fit.range || String(fit.tier);
+  const mark = el('span', { class: cls, text });
+  if (fit.primary) {
+    mark.appendChild(el('span', { class: 'primary-mark', text: '★' }));
+  }
+  return mark;
+}
+
+// ============================================================
+// MATRIX
+// ============================================================
+
+function renderMatrix() {
+  const wrap = document.getElementById('matrixWrap');
+  clear(wrap);
+
+  for (const section of SECTIONS) {
+    if (!state.activeSections.has(section.id)) continue;
+    const sectionCandidates = CANDIDATES.filter(c => c.section === section.id);
+    if (!sectionCandidates.length) continue;
+
+    const band = el('div', { class: 'section-band' }, [
+      el('div', { class: 'section-band-title', text: section.name }),
+      el('div', { class: 'section-band-meta', text: `${sectionCandidates.length} candidates` })
+    ]);
+    wrap.appendChild(band);
+
+    const matrix = el('div', { class: 'matrix' });
+    matrix.appendChild(el('div', { class: 'col-head col-head-name', text: 'Candidate' }));
+    for (const r of ROLES) {
+      matrix.appendChild(el('div', { class: 'col-head', 'data-role': r.id, title: r.name, text: r.id }));
+    }
+
+    sectionCandidates.forEach((c, i) => {
+      const delay = `${i * 18}ms`;
+
+      const nameCell = el('div', {
+        class: 'cell-name',
+        'data-candidate': c.name,
+        style: { animationDelay: delay }
+      }, [
+        el('span', { class: 'name', text: c.name })
+      ]);
+      matrix.appendChild(nameCell);
+
+      for (const r of ROLES) {
+        const fit = c.fits[r.id];
+        const cellClass = ['cell'];
+        if (fit && fit.closed) cellClass.push('is-closed');
+        if (fit && fit.declined) cellClass.push('is-declined');
+        const cell = el('div', {
+          class: cellClass.join(' '),
+          'data-candidate': c.name,
+          'data-role': r.id,
+          style: { animationDelay: delay }
+        });
+        const mark = buildTierMark(fit);
+        if (mark) cell.appendChild(mark);
+        matrix.appendChild(cell);
+      }
+    });
+
+    wrap.appendChild(matrix);
+  }
+}
+
+// ============================================================
+// SECTION CHIPS
+// ============================================================
+
+function renderSectionChips() {
+  const wrap = document.getElementById('sectionChips');
+  clear(wrap);
+
+  const allActive = state.activeSections.size === SECTIONS.length;
+  const allChip = el('button', {
+    class: 'chip' + (allActive ? ' is-active' : ''),
+    type: 'button',
+    'data-section': 'all'
+  }, [
+    'All ',
+    el('span', { class: 'chip-count', text: String(CANDIDATES.length) })
+  ]);
+  wrap.appendChild(allChip);
+
+  for (const s of SECTIONS) {
+    const count = CANDIDATES.filter(c => c.section === s.id).length;
+    const chip = el('button', {
+      class: 'chip' + (state.activeSections.has(s.id) ? ' is-active' : ''),
+      type: 'button',
+      'data-section': s.id
+    }, [
+      `${s.name} `,
+      el('span', { class: 'chip-count', text: String(count) })
+    ]);
+    wrap.appendChild(chip);
+  }
+}
+
+// ============================================================
+// OUTREACH
+// ============================================================
+
+function renderSimpleList(id, items) {
+  const ul = document.getElementById(id);
+  clear(ul);
+  items.forEach((item) => {
+    const li = el('li', {
+      class: 'outreach-item',
+      'data-candidate': item.name
+    }, [
+      el('span', { class: 'outreach-num', text: '·' }),
+      el('div', null, [
+        el('div', { class: 'outreach-name', text: item.name }),
+        el('div', { class: 'outreach-rationale', text: item.rationale })
+      ]),
+      el('span', { class: 'outreach-tag', text: item.tag })
+    ]);
+    ul.appendChild(li);
+  });
+}
+
+function renderPriorityList(id, items) {
+  const ul = document.getElementById(id);
+  clear(ul);
+  let lastPriority = null;
+  items.forEach((item) => {
+    if (item.priority !== lastPriority) {
+      const divider = el('li', { class: 'priority-divider' }, [
+        el('span', { class: 'priority-num', text: String(item.priority).padStart(2, '0') }),
+        `Priority ${item.priority}`
+      ]);
+      ul.appendChild(divider);
+      lastPriority = item.priority;
+    }
+    const li = el('li', {
+      class: 'outreach-item',
+      'data-candidate': item.name
+    }, [
+      el('span', { class: 'outreach-num', text: '·' }),
+      el('div', null, [
+        el('div', { class: 'outreach-name', text: item.name }),
+        el('div', { class: 'outreach-rationale', text: item.rationale })
+      ]),
+      el('span', { class: 'outreach-tag', text: item.tag })
+    ]);
+    ul.appendChild(li);
+  });
+}
+
+function renderOutreach() {
+  renderSimpleList('outreach-motion', OUTREACH.motion);
+  renderSimpleList('outreach-hold',   OUTREACH.hold);
+  renderPriorityList('outreach-week', OUTREACH.week);
+}
+
+// ============================================================
+// BRIEFING
+// ============================================================
+
+function renderBriefing() {
+  const wrap = document.getElementById('observations');
+  clear(wrap);
+  OBSERVATIONS.forEach((obs, i) => {
+    const numText = String(i + 1).padStart(2, '0');
+    const isMars = (i === 0 || i === 3 || i === 6);
+    const div = el('div', { class: 'observation' + (isMars ? ' is-mars' : '') }, [
+      el('div', { class: 'observation-num', text: numText }),
+      el('div', { class: 'observation-body' }, [
+        el('div', { class: 'observation-headline', text: obs.title }),
+        el('p', { text: obs.body })
+      ])
+    ]);
+    wrap.appendChild(div);
+  });
+}
+
+// ============================================================
+// CANDIDATE DRAWER
+// ============================================================
+
+function openCandidateDrawer(name) {
+  const c = CANDIDATES.find(x => x.name === name);
+  if (!c) return;
+
+  const fitEntries = Object.entries(c.fits)
+    .filter(([_, f]) => f.tier != null)
+    .sort((a, b) => {
+      if (a[1].primary !== b[1].primary) return a[1].primary ? -1 : 1;
+      const at = a[1].range ? parseFloat(a[1].range) : a[1].tier;
+      const bt = b[1].range ? parseFloat(b[1].range) : b[1].tier;
+      return at - bt;
+    });
+
+  const exclusions = Object.entries(c.fits)
+    .filter(([_, f]) => f.closed || f.declined)
+    .map(([roleId, f]) => ({ roleId, label: f.declined ? 'declined' : 'closed' }));
+
+  const section = SECTIONS.find(s => s.id === c.section);
+
+  const body = document.getElementById('drawerBody');
+  clear(body);
+
+  body.appendChild(el('div', { class: 'drawer-eyebrow' }, [
+    el('span', { class: 'dot' }),
+    `Candidate · ${section ? section.name : ''}`
+  ]));
+  body.appendChild(el('div', { class: 'drawer-title', text: c.name }));
+  const subParts = [`${fitEntries.length} role-shape fit${fitEntries.length === 1 ? '' : 's'}`];
+  if (exclusions.length) subParts.push(`${exclusions.length} closed`);
+  body.appendChild(el('div', { class: 'drawer-subtitle', text: subParts.join(' · ') }));
+
+  // Links section
+  const links = LINKS[c.name] || {};
+  const linkSection = el('div', { class: 'drawer-section' });
+  linkSection.appendChild(el('div', { class: 'drawer-section-title', text: 'Profile links' }));
+  const linkRow = el('div', { class: 'link-row' });
+  const linkDefs = [
+    { key: 'greenhouse', label: 'Greenhouse' },
+    { key: 'linkedin',   label: 'LinkedIn' },
+    { key: 'github',     label: 'GitHub' },
+    { key: 'site',       label: 'Website' }
+  ];
+  let hasAny = false;
+  for (const def of linkDefs) {
+    if (links[def.key]) {
+      hasAny = true;
+      linkRow.appendChild(el('a', {
+        class: 'link-pill ' + def.key,
+        href: links[def.key],
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        text: def.label
+      }));
+    }
+  }
+  if (!hasAny) {
+    linkRow.appendChild(el('div', { class: 'link-empty', text: 'No links captured yet.' }));
+  }
+  linkSection.appendChild(linkRow);
+  body.appendChild(linkSection);
+
+  // Fits section
+  const fitsSection = el('div', { class: 'drawer-section' });
+  fitsSection.appendChild(el('div', { class: 'drawer-section-title' }, [
+    'Role-shape fits',
+    el('span', { class: 'meta', text: 'By tier' })
+  ]));
+  if (fitEntries.length) {
+    const list = el('div', { class: 'fit-list' });
+    for (const [roleId, fit] of fitEntries) {
+      const role = ROLES.find(r => r.id === roleId);
+      const tierLabel = fit.range || fit.tier;
+      const item = el('div', {
+        class: 'fit-item' + (fit.primary ? ' primary-lane' : ''),
+        'data-role': roleId
+      });
+      const mark = buildTierMark(fit);
+      item.appendChild(mark || el('span'));
+      const itemBody = el('div', { class: 'fit-item-body' }, [
+        el('div', { class: 'fit-item-name', text: role.name }),
+        el('div', { class: 'fit-item-shape', text: `${roleId} · Tier ${tierLabel}` })
+      ]);
+      if (fit.note) {
+        itemBody.appendChild(el('div', { class: 'fit-item-note', text: `"${fit.note}"` }));
+      }
+      item.appendChild(itemBody);
+      if (fit.primary) {
+        item.appendChild(el('span', { class: 'primary-pill', text: 'Primary' }));
+      } else {
+        item.appendChild(el('span'));
+      }
+      item.addEventListener('click', () => openRoleDrawer(roleId));
+      list.appendChild(item);
+    }
+    fitsSection.appendChild(list);
+  } else {
+    fitsSection.appendChild(el('div', {
+      style: { color: 'var(--ink-faint)', fontStyle: 'italic' },
+      text: 'No fits recorded.'
+    }));
+  }
+  body.appendChild(fitsSection);
+
+  // Exclusions
+  if (exclusions.length) {
+    const exSection = el('div', { class: 'drawer-section' });
+    exSection.appendChild(el('div', { class: 'drawer-section-title' }, [
+      'Closed lanes',
+      el('span', { class: 'meta', text: String(exclusions.length) })
+    ]));
+    const exList = el('div', { class: 'exclusion-list' });
+    for (const e of exclusions) {
+      const pill = el('span', { class: 'exclusion-pill' }, [
+        e.roleId,
+        el('span', { class: 'label', text: e.label })
+      ]);
+      exList.appendChild(pill);
+    }
+    exSection.appendChild(exList);
+    body.appendChild(exSection);
+  }
+
+  state.drawer = { kind: 'candidate', name };
+  showDrawer();
+}
+
+// ============================================================
+// ROLE DRAWER
+// ============================================================
+
+function openRoleDrawer(roleId) {
+  const role = ROLES.find(r => r.id === roleId);
+  const rollup = ROLE_ROLLUPS[roleId];
+  if (!role || !rollup) return;
+
+  const t1 = rollup.tier1.length;
+  const t2 = rollup.tier2.length;
+  const t3 = rollup.tier3.length;
+
+  const body = document.getElementById('drawerBody');
+  clear(body);
+
+  body.appendChild(el('div', { class: 'drawer-eyebrow' }, [
+    el('span', { class: 'dot' }),
+    'Role-shape'
+  ]));
+  body.appendChild(el('div', {
+    class: 'role-status-pill ' + role.status
+  }, [
+    el('span', { class: 'blink' }),
+    `${role.status} · ${role.shortStatus}`
+  ]));
+  body.appendChild(el('div', { class: 'drawer-title', text: role.name }));
+  body.appendChild(el('div', { class: 'drawer-subtitle', text: role.description }));
+
+  // Pool depth stats
+  const poolSection = el('div', { class: 'drawer-section' });
+  poolSection.appendChild(el('div', { class: 'drawer-section-title' }, [
+    'Pool depth',
+    el('span', { class: 'meta', text: `${t1 + t2 + t3} candidates` })
+  ]));
+  const statRow = el('div', { class: 'role-stat-row' });
+  for (const [tier, count, label] of [[1, t1, 'Tier 1 — Schedule'], [2, t2, 'Tier 2 — Probe'], [3, t3, 'Tier 3 — Hold']]) {
+    statRow.appendChild(el('div', { class: 'role-stat t' + tier }, [
+      el('div', { class: 'role-stat-num', text: String(count) }),
+      el('div', { class: 'role-stat-label', text: label })
+    ]));
+  }
+  poolSection.appendChild(statRow);
+  body.appendChild(poolSection);
+
+  // Tier lists
+  const renderTierList = (label, items) => {
+    if (!items.length) return null;
+    const section = el('div', { class: 'drawer-section' });
+    section.appendChild(el('div', { class: 'drawer-section-title', text: label }));
+    const ul = el('ul', { class: 'role-list' });
+    for (const itemText of items) {
+      const cleanName = itemText.split('(')[0].trim();
+      const candidate = CANDIDATES.find(x => x.name === cleanName);
+      const li = el('li', {
+        class: candidate ? 'is-clickable' : '',
+        text: itemText
+      });
+      if (candidate) {
+        li.addEventListener('click', () => openCandidateDrawer(candidate.name));
+      }
+      ul.appendChild(li);
+    }
+    section.appendChild(ul);
+    return section;
+  };
+
+  const t1Section = renderTierList('Tier 1 — Schedule', rollup.tier1);
+  if (t1Section) body.appendChild(t1Section);
+  const t2Section = renderTierList('Tier 2 — Probe first', rollup.tier2);
+  if (t2Section) body.appendChild(t2Section);
+  const t3Section = renderTierList('Tier 3 — Hold', rollup.tier3);
+  if (t3Section) body.appendChild(t3Section);
+
+  if (rollup.note) {
+    const noteSection = el('div', { class: 'drawer-section' });
+    noteSection.appendChild(el('div', { class: 'drawer-section-title', text: 'Pool reading' }));
+    noteSection.appendChild(el('p', { class: 'pool-reading', text: rollup.note }));
+    body.appendChild(noteSection);
+  }
+
+  state.drawer = { kind: 'role', id: roleId };
+  showDrawer();
+}
+
+// ============================================================
+// DRAWER CONTROLS
+// ============================================================
+
+function showDrawer() {
+  document.getElementById('drawer').classList.add('is-open');
+  document.getElementById('drawerScrim').classList.add('is-open');
+  document.getElementById('drawer').setAttribute('aria-hidden', 'false');
+}
+
+function hideDrawer() {
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  document.getElementById('drawer').classList.remove('is-open');
+  document.getElementById('drawerScrim').classList.remove('is-open');
+  document.getElementById('drawer').setAttribute('aria-hidden', 'true');
+  state.drawer = null;
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+
+function bindEvents() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('is-active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      const view = tab.dataset.view;
+      document.querySelector(`.view[data-view="${view}"]`).classList.add('is-active');
+      state.view = view;
+      document.getElementById('controlbar').style.display = view === 'matrix' ? 'flex' : 'none';
+    });
+  });
+
+  document.getElementById('sectionChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const section = chip.dataset.section;
+    if (section === 'all') {
+      if (state.activeSections.size === SECTIONS.length) state.activeSections = new Set();
+      else state.activeSections = new Set(SECTIONS.map(s => s.id));
+    } else {
+      if (state.activeSections.has(section)) state.activeSections.delete(section);
+      else state.activeSections.add(section);
+    }
+    renderSectionChips();
+    renderMatrix();
+  });
+
+  document.getElementById('matrixWrap').addEventListener('click', (e) => {
+    const nameCell = e.target.closest('.cell-name');
+    if (nameCell) { openCandidateDrawer(nameCell.dataset.candidate); return; }
+    const cell = e.target.closest('.cell');
+    if (cell && cell.dataset.candidate) {
+      if (e.shiftKey) openRoleDrawer(cell.dataset.role);
+      else openCandidateDrawer(cell.dataset.candidate);
+      return;
+    }
+    const header = e.target.closest('.col-head[data-role]');
+    if (header) openRoleDrawer(header.dataset.role);
+  });
+
+  document.getElementById('matrixWrap').addEventListener('mouseover', (e) => {
+    const cell = e.target.closest('.cell');
+    const header = e.target.closest('.col-head[data-role]');
+    document.querySelectorAll('.col-head.is-highlighted').forEach(el => el.classList.remove('is-highlighted'));
+    document.querySelectorAll('.cell-name.is-highlighted').forEach(el => el.classList.remove('is-highlighted'));
+    document.querySelectorAll('.cell.is-row-highlighted').forEach(el => el.classList.remove('is-row-highlighted'));
+
+    if (cell && cell.dataset.role) {
+      const candidate = cell.dataset.candidate;
+      const role = cell.dataset.role;
+      document.querySelectorAll(`.col-head[data-role="${role}"]`).forEach(el => el.classList.add('is-highlighted'));
+      document.querySelectorAll(`[data-candidate="${candidate}"]`).forEach(el => {
+        if (el.classList.contains('cell-name')) el.classList.add('is-highlighted');
+        else if (el.classList.contains('cell')) el.classList.add('is-row-highlighted');
+      });
+    } else if (header) {
+      document.querySelectorAll(`.col-head[data-role="${header.dataset.role}"]`).forEach(el => el.classList.add('is-highlighted'));
+    }
+  });
+
+  document.getElementById('matrixWrap').addEventListener('mouseleave', () => {
+    document.querySelectorAll('.col-head.is-highlighted').forEach(el => el.classList.remove('is-highlighted'));
+    document.querySelectorAll('.cell-name.is-highlighted').forEach(el => el.classList.remove('is-highlighted'));
+    document.querySelectorAll('.cell.is-row-highlighted').forEach(el => el.classList.remove('is-row-highlighted'));
+  });
+
+  ['outreach-motion', 'outreach-week', 'outreach-hold'].forEach(id => {
+    document.getElementById(id).addEventListener('click', (e) => {
+      const item = e.target.closest('.outreach-item');
+      if (!item) return;
+      const name = item.dataset.candidate;
+      if (CANDIDATES.find(c => c.name === name)) openCandidateDrawer(name);
+    });
+  });
+
+  document.getElementById('drawerClose').addEventListener('click', hideDrawer);
+  document.getElementById('drawerScrim').addEventListener('click', hideDrawer);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideDrawer();
+  });
+}
+
+function init() {
+  renderSectionChips();
+  renderMatrix();
+  renderOutreach();
+  renderBriefing();
+  bindEvents();
+}
+
+// ============================================================
+// BOOTSTRAP — fetch config + data, wire to globals, then init
+// ============================================================
+
+function applyConfig(config) {
+  if (!config || typeof config !== 'object') return;
+
+  if (config.title) document.title = config.title;
+
+  const titleEl = document.querySelector('.masthead-title');
+  if (titleEl && config.title) titleEl.textContent = config.title;
+
+  const eyebrowEl = document.querySelector('.masthead-eyebrow');
+  if (eyebrowEl) eyebrowEl.textContent = config.eyebrow || '';
+
+  const metaEl = document.querySelector('.masthead-meta');
+  if (metaEl) {
+    clear(metaEl);
+    const items = Array.isArray(config.metaItems) ? config.metaItems : [];
+    items.forEach(text => {
+      const span = document.createElement('span');
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      span.appendChild(dot);
+      span.appendChild(document.createTextNode(' ' + String(text)));
+      metaEl.appendChild(span);
+    });
+  }
+
+  const counterLabel = document.querySelector('.counter-label');
+  if (counterLabel && config.counterLabel) counterLabel.textContent = config.counterLabel;
+}
+
+function applyCounters() {
+  const nums = document.querySelectorAll('.counter-num');
+  if (nums.length >= 2) {
+    nums[0].textContent = Array.isArray(CANDIDATES) ? CANDIDATES.length : 0;
+    nums[1].textContent = Array.isArray(ROLES) ? ROLES.length : 0;
+  }
+}
+
+function showLoadError(err) {
+  const body = document.body || document.documentElement;
+  const message = (err && err.message) ? err.message : String(err);
+  clear(body);
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'padding: 2rem; font-family: ui-monospace, monospace; line-height: 1.5; color: #7a1f1f; background: #fff8f0; max-width: 720px; margin: 4rem auto; border: 1px solid #e6cdb0; border-radius: 8px; white-space: pre-wrap;';
+  pre.textContent =
+    'Failed to load matrix-config.json or matrix-data.json.\n\n' +
+    message + '\n\n' +
+    'Check that:\n' +
+    '  1. matrix-config.json and matrix-data.json exist next to index.html\n' +
+    '     (copy them from the *.example.json files if you haven\'t yet)\n' +
+    '  2. you are serving via a local HTTP server, not file://\n' +
+    '     (browsers block fetch() from file:// for security)\n\n' +
+    'Quick start: from this directory, run:\n' +
+    '  python3 -m http.server 8000\n' +
+    'then open http://localhost:8000';
+  body.appendChild(pre);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  Promise.all([
+    fetch('matrix-config.json').then(r => {
+      if (!r.ok) throw new Error('matrix-config.json: HTTP ' + r.status);
+      return r.json();
+    }),
+    fetch('matrix-data.json').then(r => {
+      if (!r.ok) throw new Error('matrix-data.json: HTTP ' + r.status);
+      return r.json();
+    })
+  ]).then(([config, data]) => {
+    ROLES         = config.roles    || [];
+    SECTIONS      = config.sections || [];
+    CANDIDATES    = data.candidates    || [];
+    LINKS         = data.links         || {};
+    ROLE_ROLLUPS  = data.roleRollups   || {};
+    OUTREACH      = data.outreach      || { motion: [], week: [], hold: [] };
+    OBSERVATIONS  = data.observations  || [];
+
+    state = {
+      view: 'matrix',
+      activeSections: new Set(SECTIONS.map(s => s.id)),
+      drawer: null
+    };
+
+    applyConfig(config);
+    applyCounters();
+    init();
+  }).catch(showLoadError);
+});
+</script>
+</body>
+</html>

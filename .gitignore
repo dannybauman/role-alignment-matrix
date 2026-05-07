@@ -1,0 +1,12 @@
+# User's private data — keep the example versions in git, but never commit
+# the live data files. Copy from *.example.json to start.
+matrix-config.json
+matrix-data.json
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
