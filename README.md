@@ -237,3 +237,5 @@ The HTML is a single self-contained file (CSS + JS inline). No bundler, no build
 ## Origin
 
 Originally built as a private internal tool for a recruiting working session, then extracted and genericized for general use. Real data lives in a separate (private) data file; this repo carries only the example.
+
+Created with the assistance of [Claude](https://www.claude.com/).
