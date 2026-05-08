@@ -1884,7 +1884,7 @@ function openCandidateDrawer(name) {
     });
     if (stillRelevant) {
       const tier = c.locationTier;
-      const tierDesc = LOCATION_TIERS[tier] || LOCATION_TIERS[String(tier)] || '';
+      const tierDesc = LOCATION_TIERS[tier] || '';
       body.appendChild(el('div', { class: 'drawer-meta-row' }, [
         el('span', { class: 'drawer-meta-label', text: LOCATION_TIERS.label || 'Location tier' }),
         el('span', { class: 'location-tier-pill t' + tier }, [
