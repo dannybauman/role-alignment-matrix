@@ -1875,15 +1875,24 @@ function openCandidateDrawer(name) {
   }
 
   if (c.locationTier && LOCATION_TIERS) {
-    const tier = c.locationTier;
-    const tierDesc = LOCATION_TIERS[tier] || LOCATION_TIERS[String(tier)] || '';
-    body.appendChild(el('div', { class: 'drawer-meta-row' }, [
-      el('span', { class: 'drawer-meta-label', text: LOCATION_TIERS.label || 'Location tier' }),
-      el('span', { class: 'location-tier-pill t' + tier }, [
-        el('span', { class: 'location-tier-num', text: 'Tier ' + tier }),
-        tierDesc ? el('span', { class: 'location-tier-desc', text: tierDesc }) : null
-      ])
-    ]));
+    // Suppress when candidate is closed/declined for every role this locationTier modifies —
+    // showing a top-tier pill on someone we rejected gives a false signal.
+    const modifies = Array.isArray(LOCATION_TIERS.modifies) ? LOCATION_TIERS.modifies : [];
+    const stillRelevant = !modifies.length || modifies.some(roleId => {
+      const f = c.fits && c.fits[roleId];
+      return f && !f.closed && !f.declined;
+    });
+    if (stillRelevant) {
+      const tier = c.locationTier;
+      const tierDesc = LOCATION_TIERS[tier] || LOCATION_TIERS[String(tier)] || '';
+      body.appendChild(el('div', { class: 'drawer-meta-row' }, [
+        el('span', { class: 'drawer-meta-label', text: LOCATION_TIERS.label || 'Location tier' }),
+        el('span', { class: 'location-tier-pill t' + tier }, [
+          el('span', { class: 'location-tier-num', text: 'Tier ' + tier }),
+          tierDesc ? el('span', { class: 'location-tier-desc', text: tierDesc }) : null
+        ])
+      ]));
+    }
   }
 
   // Links section
@@ -1937,6 +1946,13 @@ function openCandidateDrawer(name) {
         el('div', { class: 'fit-item-name', text: role.name }),
         el('div', { class: 'fit-item-shape', text: `${roleId} · Tier ${tierLabel}` })
       ]);
+      if (fit._meritTier && fit._meritTier !== fit.tier) {
+        itemBody.appendChild(el('div', {
+          class: 'fit-item-note',
+          style: { color: 'var(--ochre)' },
+          text: `merit Tier ${fit._meritTier} → floored to Tier ${fit.tier} by locationTier ${c.locationTier}`
+        }));
+      }
       if (fit.note) {
         itemBody.appendChild(el('div', { class: 'fit-item-note', text: `"${fit.note}"` }));
       }
@@ -2172,7 +2188,27 @@ function bindEvents() {
   });
 }
 
+// Apply locationTier as a floor on fit tier for roles in LOCATION_TIERS.modifies.
+// Mutates CANDIDATES once at init so all downstream render reads the effective tier.
+// Original merit tier preserved as fit._meritTier when it differs.
+function applyLocationTierModifier() {
+  if (!LOCATION_TIERS || !Array.isArray(LOCATION_TIERS.modifies) || !LOCATION_TIERS.modifies.length) return;
+  for (const c of CANDIDATES) {
+    if (!c.locationTier) continue;
+    for (const roleId of LOCATION_TIERS.modifies) {
+      const fit = c.fits && c.fits[roleId];
+      if (!fit || fit.tier == null || fit.closed || fit.declined) continue;
+      const effective = Math.max(fit.tier, c.locationTier);
+      if (effective !== fit.tier) {
+        fit._meritTier = fit.tier;
+        fit.tier = effective;
+      }
+    }
+  }
+}
+
 function init() {
+  applyLocationTierModifier();
   renderSectionChips();
   renderMatrix();
   renderOutreach();

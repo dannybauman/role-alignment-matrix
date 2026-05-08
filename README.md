@@ -112,14 +112,19 @@ Top-level fields:
 
 ```jsonc
 "locationTiers": {
-  "label":  "string — row label shown in the drawer (default: 'Location tier')",
-  "1":      "string — description for Tier 1",
-  "2":      "string — description for Tier 2",
-  "3":      "string — description for Tier 3"
+  "label":     "string — row label shown in the drawer (default: 'Location tier')",
+  "modifies":  ["roleId", ...],   // optional — see below
+  "1":         "string — description for Tier 1",
+  "2":         "string — description for Tier 2",
+  "3":         "string — description for Tier 3"
 }
 ```
 
 When present, candidates with a `locationTier` value (1, 2, or 3) get a colored tier pill in their drawer. Common pattern: tier 1 = local / preferred, tier 2 = manageable / direct flight, tier 3 = stretch / connecting flight or international. The descriptions are free-form so you can frame the tier rule for your situation (travel access, timezone overlap, in-person availability, etc.).
+
+**`modifies` field** — list of role IDs that this `locationTier` should *floor* on the fit tier. When set, the tool computes `effectiveTier = max(meritTier, locationTier)` for each named role at init, mutates the fit cell, and preserves the original under `fit._meritTier`. The candidate drawer surfaces this as `merit Tier X → floored to Tier Y by locationTier Z` on affected fits. Useful when location is a hard constraint on a specific role (e.g. an on-site hire, a regional partnership) and you want the matrix to reflect that reality without manually editing every fit cell. Roles not in `modifies` are unaffected.
+
+The locationTier section is also suppressed in the candidate drawer when the candidate is closed or declined for *every* role in `modifies` — showing a top-tier pill on someone you've already rejected is a false signal. Drop a role from `modifies` to keep the pill visible regardless of fit status.
 
 ### `matrix-data.json`
 
