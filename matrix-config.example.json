@@ -9,7 +9,7 @@
   "counterLabel": "Candidates · Criteria",
 
   "roles": [
-    { "id": "perf",      "name": "Performance",         "status": "active",      "shortStatus": "Hot-path latency",     "description": "Throughput, memory profile, and latency at production scale." },
+    { "id": "perf",      "name": "Performance",         "status": "active",      "shortStatus": "Hot-path latency",     "description": "Throughput, memory profile, and latency at production scale.", "link": "https://example.com/benchmarks" },
     { "id": "docs",      "name": "Documentation",        "status": "active",      "shortStatus": "Onboarding curve",     "description": "Reference docs, tutorials, getting-started flow, examples." },
     { "id": "community", "name": "Community / OSS",      "status": "active",      "shortStatus": "Maintainer health",    "description": "Active maintainers, PR cadence, issue response time, governance." },
     { "id": "stability", "name": "API Stability",        "status": "active",      "shortStatus": "Breakage history",     "description": "How often breaking changes ship. Migration story for major versions." },
@@ -17,7 +17,7 @@
   ],
 
   "sections": [
-    { "id": "shortlist",  "name": "Shortlist" },
+    { "id": "shortlist",  "name": "Shortlist", "link": "https://example.com/tracker/library-shortlist" },
     { "id": "watching",   "name": "Watching" },
     { "id": "deprecated", "name": "Deprecated / passed over" }
   ]
