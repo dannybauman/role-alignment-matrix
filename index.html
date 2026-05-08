@@ -464,6 +464,66 @@ main, header, nav, aside {
   color: var(--ink-faint);
 }
 
+.drawer-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.drawer-meta-label {
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 10px;
+  flex: 0 0 auto;
+}
+
+.drawer-meta-value {
+  color: var(--ink);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.drawer-meta-value.is-unknown {
+  color: var(--ochre);
+  font-weight: 600;
+}
+
+.location-tier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  background: var(--paper-warm);
+  border-left: 3px solid var(--ink-faint);
+}
+
+.location-tier-pill.t1 { border-left-color: var(--mars);  color: var(--mars); }
+.location-tier-pill.t2 { border-left-color: var(--teal);  color: var(--teal); }
+.location-tier-pill.t3 { border-left-color: var(--ochre); color: var(--ochre); }
+
+.location-tier-num {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+
+.location-tier-desc {
+  color: var(--ink-soft);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .matrix {
   display: grid;
   grid-template-columns: 220px repeat(13, 1fr);
@@ -1566,11 +1626,17 @@ main, header, nav, aside {
 // See README for the full schema; copy matrix-{config,data}.example.json to
 // matrix-{config,data}.json and edit them to render your own situation.
 
-let ROLES, SECTIONS, CANDIDATES, LINKS, ROLE_ROLLUPS, OUTREACH, OBSERVATIONS;
+let ROLES, SECTIONS, CANDIDATES, LINKS, ROLE_ROLLUPS, OUTREACH, OBSERVATIONS, LOCATION_TIERS;
 
 // ============================================================
 // SAFE DOM HELPERS — build elements without innerHTML interpolation
 // ============================================================
+
+function formatCandidateLocation(loc) {
+  if (!loc || typeof loc !== 'object') return '?';
+  const parts = [loc.city, loc.state, loc.country].filter(p => p && String(p).trim());
+  return parts.length ? parts.join(', ') : '?';
+}
 
 function el(tag, attrs, children) {
   const node = document.createElement(tag);
@@ -1842,6 +1908,38 @@ function openCandidateDrawer(name) {
   if (exclusions.length) subParts.push(`${exclusions.length} closed`);
   body.appendChild(el('div', { class: 'drawer-subtitle', text: subParts.join(' · ') }));
 
+  if (c.location !== undefined) {
+    const locText = formatCandidateLocation(c.location);
+    body.appendChild(el('div', { class: 'drawer-meta-row' }, [
+      el('span', { class: 'drawer-meta-label', text: 'Location' }),
+      el('span', {
+        class: 'drawer-meta-value' + (locText === '?' ? ' is-unknown' : ''),
+        text: locText
+      })
+    ]));
+  }
+
+  if (c.locationTier && LOCATION_TIERS) {
+    // Suppress when candidate is closed/declined for every role this locationTier modifies —
+    // showing a top-tier pill on someone we rejected gives a false signal.
+    const modifies = Array.isArray(LOCATION_TIERS.modifies) ? LOCATION_TIERS.modifies : [];
+    const stillRelevant = !modifies.length || modifies.some(roleId => {
+      const f = c.fits && c.fits[roleId];
+      return f && !f.closed && !f.declined;
+    });
+    if (stillRelevant) {
+      const tier = c.locationTier;
+      const tierDesc = LOCATION_TIERS[tier] || '';
+      body.appendChild(el('div', { class: 'drawer-meta-row' }, [
+        el('span', { class: 'drawer-meta-label', text: LOCATION_TIERS.label || 'Location tier' }),
+        el('span', { class: 'location-tier-pill t' + tier }, [
+          el('span', { class: 'location-tier-num', text: 'Tier ' + tier }),
+          tierDesc ? el('span', { class: 'location-tier-desc', text: tierDesc }) : null
+        ])
+      ]));
+    }
+  }
+
   // Links section
   const links = LINKS[c.name] || {};
   const linkSection = el('div', { class: 'drawer-section' });
@@ -1893,6 +1991,13 @@ function openCandidateDrawer(name) {
         el('div', { class: 'fit-item-name', text: role.name }),
         el('div', { class: 'fit-item-shape', text: `${roleId} · Tier ${tierLabel}` })
       ]);
+      if (fit._meritTier && fit._meritTier !== fit.tier) {
+        itemBody.appendChild(el('div', {
+          class: 'fit-item-note',
+          style: { color: 'var(--ochre)' },
+          text: `merit Tier ${fit._meritTier} → floored to Tier ${fit.tier} by locationTier ${c.locationTier}`
+        }));
+      }
       if (fit.note) {
         itemBody.appendChild(el('div', { class: 'fit-item-note', text: `"${fit.note}"` }));
       }
@@ -2137,7 +2242,27 @@ function bindEvents() {
   });
 }
 
+// Apply locationTier as a floor on fit tier for roles in LOCATION_TIERS.modifies.
+// Mutates CANDIDATES once at init so all downstream render reads the effective tier.
+// Original merit tier preserved as fit._meritTier when it differs.
+function applyLocationTierModifier() {
+  if (!LOCATION_TIERS || !Array.isArray(LOCATION_TIERS.modifies) || !LOCATION_TIERS.modifies.length) return;
+  for (const c of CANDIDATES) {
+    if (!c.locationTier) continue;
+    for (const roleId of LOCATION_TIERS.modifies) {
+      const fit = c.fits && c.fits[roleId];
+      if (!fit || fit.tier == null || fit.closed || fit.declined) continue;
+      const effective = Math.max(fit.tier, c.locationTier);
+      if (effective !== fit.tier) {
+        fit._meritTier = fit.tier;
+        fit.tier = effective;
+      }
+    }
+  }
+}
+
 function init() {
+  applyLocationTierModifier();
   renderSectionChips();
   renderMatrix();
   renderOutreach();
@@ -2217,8 +2342,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return r.json();
     })
   ]).then(([config, data]) => {
-    ROLES         = config.roles    || [];
-    SECTIONS      = config.sections || [];
+    ROLES          = config.roles         || [];
+    SECTIONS       = config.sections      || [];
+    LOCATION_TIERS = config.locationTiers || null;
     CANDIDATES    = data.candidates    || [];
     LINKS         = data.links         || {};
     ROLE_ROLLUPS  = data.roleRollups   || {};

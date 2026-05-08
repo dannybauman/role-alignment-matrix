@@ -3,6 +3,7 @@
     {
       "name": "GeoFox",
       "section": "shortlist",
+      "location": { "country": "Germany", "city": "Berlin" },
       "fits": {
         "perf":      { "tier": 1, "primary": true, "note": "Fastest in benchmarks across our shapes" },
         "docs":      { "tier": 2, "note": "Reference is solid, tutorials thin" },
@@ -25,6 +26,7 @@
     {
       "name": "TileSmith",
       "section": "shortlist",
+      "location": {},
       "fits": {
         "perf":      { "tier": 1 },
         "docs":      { "tier": 3 },
