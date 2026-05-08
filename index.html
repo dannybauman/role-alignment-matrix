@@ -422,6 +422,40 @@ main, header, nav, aside {
   letter-spacing: -0.01em;
 }
 
+.section-link {
+  margin-left: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  text-decoration: none;
+  vertical-align: middle;
+  transition: color 0.12s ease;
+}
+
+.section-link:hover {
+  color: var(--ink);
+}
+
+.drawer-external-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--ink-faint);
+  padding-bottom: 1px;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+.drawer-external-link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
 .section-band-meta {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
@@ -1606,8 +1640,19 @@ function renderMatrix() {
     const sectionCandidates = CANDIDATES.filter(c => c.section === section.id);
     if (!sectionCandidates.length) continue;
 
+    const titleNode = el('div', { class: 'section-band-title', text: section.name });
+    if (section.link) {
+      titleNode.appendChild(el('a', {
+        class: 'section-link',
+        href: section.link,
+        target: '_blank',
+        rel: 'noopener',
+        title: 'Open external link',
+        text: '↗'
+      }));
+    }
     const band = el('div', { class: 'section-band' }, [
-      el('div', { class: 'section-band-title', text: section.name }),
+      titleNode,
       el('div', { class: 'section-band-meta', text: `${sectionCandidates.length} candidates` })
     ]);
     wrap.appendChild(band);
@@ -1920,6 +1965,15 @@ function openRoleDrawer(roleId) {
   ]));
   body.appendChild(el('div', { class: 'drawer-title', text: role.name }));
   body.appendChild(el('div', { class: 'drawer-subtitle', text: role.description }));
+  if (role.link) {
+    body.appendChild(el('a', {
+      class: 'drawer-external-link',
+      href: role.link,
+      target: '_blank',
+      rel: 'noopener',
+      text: 'Open ↗'
+    }));
+  }
 
   // Pool depth stats
   const poolSection = el('div', { class: 'drawer-section' });

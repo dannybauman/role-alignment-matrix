@@ -95,7 +95,8 @@ Top-level fields:
   "name":        "string — full label shown in the column header",
   "status":      "active | prospective",
   "shortStatus": "string — sub-label under the role name",
-  "description": "string — tooltip text"
+  "description": "string — tooltip text",
+  "link":        "string — optional URL. Renders as an Open ↗ link in the role drawer (opens when the column header is clicked). Useful for pointing to a tracking ticket, spec doc, benchmarks, or any external context for the role."
 }
 ```
 
@@ -104,7 +105,8 @@ Top-level fields:
 ```jsonc
 {
   "id":   "string — short key, used as candidate.section",
-  "name": "string — section header label"
+  "name": "string — section header label",
+  "link": "string — optional URL. Renders as a small ↗ next to the section title. Useful for sections that map to a single tracked thing (a hiring ticket, an open issue, a project tracker). Pool / status sections that don't map to one anchor can omit it."
 }
 ```
 
